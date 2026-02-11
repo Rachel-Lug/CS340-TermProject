@@ -1,0 +1,32 @@
+{
+  "name": "termproject",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+     "development": "npx nodemon app.js",
+    "production": "npx forever start app.js",
+    "stop_production": "npx forever stop app.js"
+  },
+  "author": "Rachel, Jennifer, Conrad",
+  "license": "ISC",
+  "description": "This is the first draft for the complete term project of CS340 intoduction to databases. ",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Rachel-Lug/CS340-TermProject.git"
+  },
+  "keywords": [
+    "CS340"
+  ],
+  "bugs": {
+    "url": "https://github.com/Rachel-Lug/CS340-TermProject/issues"
+  },
+  "homepage": "https://github.com/Rachel-Lug/CS340-TermProject#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-handlebars": "^8.0.5",
+    "forever": "^4.0.3",
+    "mysql2": "^3.16.3",
+    "nodemon": "^3.1.11"
+  },
+  "devDependencies": {}
+}

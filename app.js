@@ -52,6 +52,90 @@ app.get('/Students', async function (req, res) {
         );
     }
 });
+
+app.get('/Courses', async function (req, res) {
+    try {
+        // Query to get all courses
+        const query = `
+            SELECT courseId, courseName, courseTitle, courseCredit, departmentId
+            FROM Courses;
+        `;
+
+        // Execute the query
+        const [courses] = await db.query(query);
+
+        // Render the courses.hbs file, passing the courses data
+        res.render('courses', { courses: courses });
+    } catch (error) {
+        console.error('Error executing query:', error);
+        res.status(500).send(
+            'An error occurred while executing the database query.'
+        );
+    }
+});
+
+app.get('/Departments', async function (req, res) {
+    try {
+        // Query to get all departments
+        const query = `
+            SELECT departmentId, departmentName
+            FROM Departments;
+        `;
+
+        // Execute the query
+        const [departments] = await db.query(query);
+
+        // Render the departments.hbs file, passing the departments data
+        res.render('departments', { departments: departments });
+    } catch (error) {
+        console.error('Error executing query:', error);
+        res.status(500).send(
+            'An error occurred while executing the database query.'
+        );
+    }
+});
+
+app.get('/Instructors', async function (req, res) {
+    try {
+        // Query to get all instructors
+        const query = `
+            SELECT instructorId, firstName, lastName, email, departmentId
+            FROM Instructors;
+        `;
+
+        // Execute the query
+        const [instructors] = await db.query(query);
+
+        // Render the instructors.hbs file, passing the instructors data
+        res.render('instructors', { instructors: instructors });
+    } catch (error) {
+        console.error('Error executing query:', error);
+        res.status(500).send(
+            'An error occurred while executing the database query.'
+        );
+    }
+});
+
+app.get('/AcademicTerms', async function (req, res) {
+    try {
+        // Query to get all academic terms
+        const query = `
+            SELECT academicTermId, termName, startDate, endDate, year
+            FROM AcademicTerms;
+        `;
+
+        // Execute the query
+        const [academicTerms] = await db.query(query);
+
+        // Render the academicTerms.hbs file, passing the academicTerms data
+        res.render('academicTerms', { academicTerms: academicTerms });
+    } catch (error) {
+        console.error('Error executing query:', error);
+        res.status(500).send(
+            'An error occurred while executing the database query.'
+        );
+    }
+});
 // =====================
 // CREATE a Student
 // =====================

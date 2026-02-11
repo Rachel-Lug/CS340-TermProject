@@ -1,0 +1,26 @@
+<h1>Courses</h1>
+
+<table>
+    <thead>
+        <tr>
+            {{#each courses.[0]}}
+            <th>
+                {{@key}}
+            </th>
+            {{/each}}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#each courses}}
+        <tr>
+            <td>{{courseId}}</td>
+            <td>{{courseCode}}</td>
+            <td>{{courseTitle}}</td>
+            <td>{{courseCredit}}</td>
+            <td>{{departmentId}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

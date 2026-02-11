@@ -1,0 +1,26 @@
+<h1>Academic Terms</h1>
+
+<table>
+    <thead>
+        <tr>
+            {{#each academicTerms.[0]}}
+            <th>
+                {{@key}}
+            </th>
+            {{/each}}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#each academicTerms}}
+        <tr>
+            <td>{{academicTermId}}</td>
+            <td>{{termName}}</td>
+            <td>{{startDate}}</td>
+            <td>{{endDate}}</td>
+            <td>{{year}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

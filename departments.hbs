@@ -1,0 +1,23 @@
+<h1>Departments</h1>
+
+<table>
+    <thead>
+        <tr>
+            {{#each departments.[0]}}
+            <th>
+                {{@key}}
+            </th>
+            {{/each}}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#each departments}}
+        <tr>
+            <td>{{departmentId}}</td>
+            <td>{{departmentName}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

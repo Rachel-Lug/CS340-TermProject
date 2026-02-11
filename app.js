@@ -32,29 +32,80 @@ app.get('/', async function (req, res) {
     }
 });
 
-app.get('/bsg-people', async function (req, res) {
+app.get('/Students', async function (req, res) {
     try {
-        // Create and execute our queries
-        // In query1, we use a JOIN clause to display the names of the homeworlds
-        const query1 = `SELECT bsg_people.id, bsg_people.fname, bsg_people.lname, \
-            bsg_planets.name AS 'homeworld', bsg_people.age FROM bsg_people \
-            LEFT JOIN bsg_planets ON bsg_people.homeworld = bsg_planets.id;`;
-        const query2 = 'SELECT * FROM bsg_planets;';
-        const [people] = await db.query(query1);
-        const [homeworlds] = await db.query(query2);
+        // Query to get all students
+        const query = `
+            SELECT studentId, firstName, lastName, email, major
+            FROM Students;
+        `;
 
-        // Render the bsg-people.hbs file, and also send the renderer
-        //  an object that contains our bsg_people and bsg_homeworld information
-        res.render('bsg-people', { people: people, homeworlds: homeworlds });
+        // Execute the query
+        const [students] = await db.query(query);
+
+        // Render the students.hbs file, passing the students data
+        res.render('students', { students: students });
     } catch (error) {
-        console.error('Error executing queries:', error);
-        // Send a generic error message to the browser
+        console.error('Error executing query:', error);
         res.status(500).send(
-            'An error occurred while executing the database queries.'
+            'An error occurred while executing the database query.'
         );
     }
 });
+// =====================
+// CREATE a Student
+// =====================
+app.post('/students/create', async (req, res) => {
+    try {
+        const { firstName, lastName, email, major } = req.body;
 
+        await db.query(
+            `INSERT INTO Students (firstName, lastName, email, major) VALUES (?, ?, ?, ?)`,
+            [firstName, lastName, email, major]
+        );
+
+        res.redirect('/Students');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to create student.');
+    }
+});
+// =====================
+// UPDATE a Student
+// =====================
+app.post('/students/update', async (req, res) => {
+    try {
+        const { studentId, email, major } = req.body;
+
+        await db.query(
+            `UPDATE Students SET email = ?, major = ? WHERE studentId = ?`,
+            [email, major, studentId]
+        );
+
+        res.redirect('/Students');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to update student.');
+    }
+});
+// =====================
+// DELETE a Student
+// =====================
+app.post('/students/delete', async (req, res) => {
+    try {
+        const { studentId } = req.body;
+
+        await db.query(
+            `DELETE FROM Students WHERE studentId = ?`,
+            [studentId]
+        );
+
+        res.redirect('/Students');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to delete student.');
+    }
+});
 // ########################################
 // ########## LISTENER
 

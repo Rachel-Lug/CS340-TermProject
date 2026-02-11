@@ -1,0 +1,75 @@
+<h1>Students</h1>
+
+<table>
+    <thead>
+        {{! For the table header row, we print the DB attribute names }}
+        <tr>
+            {{#each students.[0]}}
+            <th>
+                {{@key}}
+            </th>
+            {{/each}}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{! For each row, print the id, fname, lname, homeworld and age }}
+        {{#each students}}
+        <tr>
+            <td>{{studentId}}</td>
+            <td>{{firstName}}</td>
+            <td>{{lastName}}</td>
+            <td>{{email}}</td>
+            <td>{{major}}</td>
+
+           <!-- DELETE FORM -->
+           <td>
+                <form method="POST" action="/students/delete" style="display:inline">
+                    <input type="hidden" name="studentId" value="{{studentId}}" />
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+
+<!-- ===================== CREATE FORM ===================== -->
+<h2>Create a Student</h2>
+<form method="POST" action="/students/create">
+    <label>First Name:</label>
+    <input type="text" name="firstName" required />
+    
+    <label>Last Name:</label>
+    <input type="text" name="lastName" />
+    
+    <label>Email:</label>
+    <input type="text" name="email" />
+    
+    <label>Major:</label>
+    <input type="text" name="major" />
+    
+    <input type="submit" value="Create Student" />
+</form>
+
+<!-- ===================== UPDATE FORM ===================== -->
+<h2>Update a Student</h2>
+<form method="POST" action="/students/update">
+    <label>Student:</label>
+    <select name="studentId" required>
+        <option value="" disabled selected>Select a student</option>
+        {{#each students}}
+        <option value="{{studentId}}">{{studentId}} - {{firstName}} {{lastName}}</option>
+        {{/each}}
+    </select>
+    
+    <label>New Email:</label>
+    <input type="text" name="email" />
+    
+    <label>New Major:</label>
+    <input type="text" name="major" />
+    
+    <input type="submit" value="Update Student" />
+</form>

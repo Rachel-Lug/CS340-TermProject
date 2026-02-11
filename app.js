@@ -57,7 +57,7 @@ app.get('/Courses', async function (req, res) {
     try {
         // Query to get all courses
         const query = `
-            SELECT courseId, courseName, courseTitle, courseCredit, departmentId
+            SELECT courseId, courseCode, courseTitle, courseCredit, departmentId
             FROM Courses;
         `;
 

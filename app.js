@@ -61,11 +61,17 @@ app.get('/courses', async function (req, res) {
             FROM Courses;
         `;
 
-        // Execute the query
+        const departmentsQuery = `
+            SELECT departmentId, departmentName
+            FROM Departments
+            ORDER BY departmentId ASC;
+        `;
+        // Execute the queries
         const [courses] = await db.query(query);
+        const [departments] = await db.query(departmentsQuery);
 
         // Render the courses.hbs file, passing the courses data
-        res.render('courses', { courses: courses });
+        res.render('courses', { courses: courses, departments: departments });
     } catch (error) {
         console.error('Error executing query:', error);
         res.status(500).send(
@@ -103,11 +109,18 @@ app.get('/Instructors', async function (req, res) {
             FROM Instructors;
         `;
 
-        // Execute the query
+        const departmentsQuery = `
+            SELECT departmentId, departmentName
+            FROM Departments
+            ORDER BY departmentId ASC;
+        `;
+
+        // Execute the queries
         const [instructors] = await db.query(query);
+        const [departments] = await db.query(departmentsQuery);
 
         // Render the instructors.hbs file, passing the instructors data
-        res.render('instructors', { instructors: instructors });
+        res.render('instructors', { instructors: instructors, departments: departments });
     } catch (error) {
         console.error('Error executing query:', error);
         res.status(500).send(

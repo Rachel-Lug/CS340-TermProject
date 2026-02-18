@@ -1,0 +1,35 @@
+<h1>Student Courses</h1>
+
+{{#if studentcourses.length}}
+<table>
+    <thead>
+        <tr>
+            <th>Student ID</th>
+            <th>Student Name</th>
+            <th>Course Name</th>
+            <th>Course Term ID</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#each studentcourses}}
+        <tr>
+            <td>{{studentID}}</td>
+            <td>{{studentName}}</td>
+            <td>{{courseName}}</td>
+            <td>{{courseTermID}}</td>
+            <td>
+                <form action="/studentcourses/delete" method="POST">
+                    <input type="hidden" name="studentID" value="{{studentID}}">
+                    <input type="hidden" name="courseTermID" value="{{courseTermID}}">
+                    <button>Delete</button>
+                </form>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{{else}}
+<p>No student courses found.</p>
+{{/if}}

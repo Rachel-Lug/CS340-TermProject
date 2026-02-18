@@ -53,7 +53,7 @@ app.get('/Students', async function (req, res) {
     }
 });
 
-app.get('/Courses', async function (req, res) {
+app.get('/courses', async function (req, res) {
     try {
         // Query to get all courses
         const query = `
@@ -136,6 +136,53 @@ app.get('/AcademicTerms', async function (req, res) {
         );
     }
 });
+
+app.get('/studentcourses', async (req, res) => {
+    const [rows] = await db.query(`
+        SELECT
+            CONCAT(s.firstName, ' ', s.lastName) AS studentName,
+            c.courseTitle AS courseName,
+            shc.studentID,
+            shc.courseTermID
+        FROM StudentHasCourses shc
+        JOIN Students s
+            ON shc.studentID = s.studentID
+        JOIN CourseTerms ct
+            ON shc.courseTermID = ct.courseTermID
+        JOIN Courses c
+            ON ct.courseID = c.courseID
+        ORDER BY c.courseTitle, s.lastName
+    `);
+
+    res.render('studentcourses', { studentcourses: rows });
+});
+app.get('/courseTerms', async (req, res) => {
+    try {
+        const [rows] = await db.query(`
+            SELECT 
+                ct.courseTermID,
+                c.courseTitle AS courseName,
+                a.termName AS academicTerm,
+                i.firstName AS instructorFirstName,
+                i.lastName AS instructorLastName
+            FROM CourseTerms ct
+            JOIN Courses c
+                ON ct.courseID = c.courseID
+            JOIN AcademicTerms a
+                ON ct.academicTermID = a.academicTermID
+            JOIN Instructors i
+                ON ct.instructorID = i.instructorID
+            ORDER BY c.courseTitle, a.termName
+        `);
+
+        res.render('courseTerms', { courseTerms: rows });
+    } catch (err) {
+        console.error('SQL ERROR:', err);
+        res.status(500).send('Failed to load course terms');
+    }
+});
+//------------------------------------------------------------------------------------------
+//Below is the CRUD for all sections
 // =====================
 // CREATE a Student
 // =====================
@@ -234,6 +281,99 @@ app.post('/students/delete', async (req, res) => {
 // DELETE a academic term
 // =====================
 
+
+
+//========================
+// CREATE students courses 
+//========================
+app.get('/studentcourses/add', async (req, res) => {
+    const [students] = await db.query(`
+        SELECT studentID, firstName, lastName
+        FROM Students
+    `);
+
+    const [courseTerms] = await db.query(`
+        SELECT courseTermID, termName
+        FROM CourseTerms
+    `);
+
+    res.render('add-studentcourse', {
+        students,
+        courseTerms
+    });
+});
+app.post('/studentcourses/add', async (req, res) => {
+    const { studentID, courseTermID } = req.body;
+
+    await db.query(
+        `INSERT INTO StudentHasCourses (studentID, courseTermID)
+         VALUES (?, ?)`,
+        [studentID, courseTermID]
+    );
+
+    res.redirect('/studentcourses');
+});
+//========================
+// DELETE students courses
+//========================
+app.post('/studentcourses/delete', async (req, res) => {
+    const { studentID, courseTermID } = req.body;
+
+    await db.query(
+        `DELETE FROM StudentHasCourses
+         WHERE studentID = ? AND courseTermID = ?`,
+        [studentID, courseTermID]
+    );
+
+    res.redirect('/studentcourses');
+});
+//========================
+// CREATE Course Terms
+//========================
+app.get('/courseTerms/add', async (req, res) => {
+    try {
+        res.render('add-courseterm'); // Render a form specifically for adding CourseTerms
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to load add course term page');
+    }
+});
+
+app.post('/courseTerms/add', async (req, res) => {
+    try {
+        const { courseID, termName, startDate, endDate } = req.body;
+
+        await db.query(
+            `INSERT INTO CourseTerms (courseID, termName, startDate, endDate)
+             VALUES (?, ?, ?, ?)`,
+            [courseID, termName, startDate, endDate]
+        );
+
+        res.redirect('/courseTerms'); // Redirect to your CourseTerms list page
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to add course term');
+    }
+});
+
+//========================
+// DELETE Course Terms
+//========================
+app.post('/courseTerms/delete', async (req, res) => {
+    try {
+        const { courseTermID } = req.body;
+
+        await db.query(
+            `DELETE FROM CourseTerms WHERE courseTermID = ?`,
+            [courseTermID]
+        );
+
+        res.redirect('/courseTerms'); // Redirect to your CourseTerms list page
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to delete course term');
+    }
+});
 
 // ########################################
 // ########## LISTENER

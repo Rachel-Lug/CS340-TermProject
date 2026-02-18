@@ -17,13 +17,41 @@
         <tr>
             <td>{{departmentId}}</td>
             <td>{{departmentName}}</td>
+
+             <!-- DELETE FORM -->
+           <td>
+                <form method="POST" action="/departments/delete" style="display:inline">
+                    <input type="hidden" name="departmentId" value="{{departmentId}}" />
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
         </tr>
-
-        <!-- DELETE FORM -->
-
         {{/each}}
     </tbody>
 </table>
 
 <!-- ===================== CREATE FORM ===================== -->
+<h2>Create a Department</h2>
+<form method="POST" action="/departments/create">
+    <label>Department Name:</label>
+    <input type="text" name="departmentName" required />
+
+    <input type="submit" value="Create Department" />
+</form>
+
 <!-- ===================== UPDATE FORM ===================== -->
+<h2>Update an Department</h2>
+<form method="POST" action="/departments/update">
+    <label>Department:</label>
+    <select name="departmentId" required>
+        <option value="" disabled selected>Select a department</option>
+        {{#each departments}}
+        <option value="{{departmentId}}">{{departmentId}} - {{departmentName}}</option>
+        {{/each}}
+    </select>
+    
+    <label>New Department Name:</label>
+    <input type="text" name="departmentName" />
+
+    <input type="submit" value="Update Department" />
+</form>

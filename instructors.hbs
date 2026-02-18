@@ -20,13 +20,61 @@
             <td>{{lastName}}</td>
             <td>{{email}}</td>
             <td>{{departmentId}}</td>
+
+            <!-- DELETE FORM -->
+           <td>
+                <form method="POST" action="/instructors/delete" style="display:inline">
+                    <input type="hidden" name="instructorId" value="{{instructorId}}" />
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
         </tr>
-
-        <!-- DELETE FORM -->
-
         {{/each}}
     </tbody>
 </table>
 
 <!-- ===================== CREATE FORM ===================== -->
+<h2>Create an Instructor</h2>
+<form method="POST" action="/instructors/create">
+    <label>First Name:</label>
+    <input type="text" name="firstName" required />
+    
+    <label>Last Name:</label>
+    <input type="text" name="lastName" required />
+    
+    <label>Email:</label>
+    <input type="text" name="email" />
+    
+    <label>Department</label>
+    <select name="departmentId">
+        {{#each departments}}
+        <option value="{{departmentId}}">{{departmentName}}</option>
+        {{/each}}
+    </select>
+    
+    <input type="submit" value="Create Instructor" />
+</form>
+
 <!-- ===================== UPDATE FORM ===================== -->
+<h2>Update an Instructor</h2>
+<form method="POST" action="/instructors/update">
+    <label>Instructor:</label>
+    <select name="instructorId" required>
+        <option value="" disabled selected>Select an instructor</option>
+        {{#each instructors}}
+        <option value="{{instructorId}}">{{instructorId}} - {{firstName}} {{lastName}}</option>
+        {{/each}}
+    </select>
+    
+    <label>New Email:</label>
+    <input type="text" name="email" />
+    
+    <label>New Department:</label>
+    <select name="departmentId">
+        {{#each departments}}
+        <option value="{{departmentId}}">{{departmentName}}</option>
+        {{/each}}
+    </select>
+
+    <input type="submit" value="Update Instructor" />
+</form>

@@ -20,13 +20,64 @@
             <td>{{courseTitle}}</td>
             <td>{{courseCredit}}</td>
             <td>{{departmentId}}</td>
+
+            <!-- DELETE FORM -->
+           <td>
+                <form method="POST" action="/courses/delete" style="display:inline">
+                    <input type="hidden" name="courseId" value="{{courseId}}" />
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
         </tr>
-
-        <!-- DELETE FORM -->
-
         {{/each}}
     </tbody>
 </table>
 
 <!-- ===================== CREATE FORM ===================== -->
+<h2>Create a Course</h2>
+<form method="POST" action="/courses/create">
+    <label>Course Code:</label>
+    <input type="text" name="courseCode" required />
+    
+    <label>Course Title:</label>
+    <input type="text" name="courseTitle" required />
+    
+    <label>Course Credit:</label>
+    <input type="number" name="courseCredit" required />
+    
+    <label>Department</label>
+    <select name="departmentId">
+        {{#each departments}}
+        <option value="{{departmentId}}">{{departmentName}}</option>
+        {{/each}}
+    </select>
+    
+    <input type="submit" value="Create Course" />
+</form>
+
 <!-- ===================== UPDATE FORM ===================== -->
+<h2>Update an Course</h2>
+<form method="POST" action="/courses/update">
+    <label>Course:</label>
+    <select name="courseId" required>
+        <option value="" disabled selected>Select a course</option>
+        {{#each courses}}
+        <option value="{{courseId}}">{{courseId}} - {{courseCode}}: {{courseTitle}}</option>
+        {{/each}}
+    </select>
+    
+    <label>New Course Code:</label>
+    <input type="text" name="courseCode" />
+    
+    <label>New Course Title:</label>
+    <input type="text" name="courseTitle" />
+    
+    <label>New Department:</label>
+    <select name="departmentId">
+        {{#each departments}}
+        <option value="{{departmentId}}">{{departmentName}}</option>
+        {{/each}}
+    </select>
+    
+    <input type="submit" value="Update Course" />
+</form>

@@ -43,10 +43,6 @@ SELECT
 FROM Courses c
 JOIN Departments d ON c.departmentID = d.departmentID;
 
--- Get all departments for the dropdown menu in the Course form
-SELECT departmentID, departmentName
-FROM Departments;
-
 -- Get a single course's data for the Update Course form
 SELECT courseID, courseCode, courseTitle, courseCredit, departmentID
 FROM Courses
@@ -80,10 +76,6 @@ SELECT
     d.departmentName AS "Department"
 FROM Instructors i
 JOIN Departments d ON i.departmentID = d.departmentID;
-
--- Get all departments for the dropdown menu in the Instructor form
-SELECT departmentID, departmentName
-FROM Departments;
 
 -- Get a single instructor's data for the Update Instructor form
 SELECT instructorID, firstName, lastName, email, departmentID
@@ -133,6 +125,10 @@ WHERE departmentID = @departmentID_from_update_form;
 DELETE FROM Departments
 WHERE departmentID = @departmentID_selected_from_browse_page;
 
+-- Query for department dropdowns (used in Courses and Instructors)
+SELECT departmentID, departmentName
+FROM Departments;
+
 
 -- ACADEMIC TERMS
 
@@ -166,10 +162,22 @@ WHERE academicTermID = @academicTermID_from_update_form;
 DELETE FROM AcademicTerms
 WHERE academicTermID = @academicTermID_selected_from_browse_page;
 
--- Delete student's enrollment in a course
-DELETE FROM StudentHasCourses
-WHERE studentID = @studentID_selected
-  AND courseTermID = @courseTermID_selected;
+-- COURSE OFFERINGS (CourseTerms)
+
+-- Get all course offerings for the Browse Course Offerings page (use JOINs to make FKs user-friendly)
+SELECT
+    c.courseCode AS "Course Code",
+    c.courseTitle AS "Course Title",
+    CONCAT(i.firstName, ' ', i.lastName) AS "Instructor",
+    at.termName AS "Term",
+    ct.courseTermID -- not shown in front end but kept for backend operations (updates/deletes)
+FROM CourseTerms ct
+JOIN Courses c 
+    ON ct.courseID = c.courseID
+JOIN Instructors i 
+    ON ct.instructorID = i.instructorID
+JOIN AcademicTerms at 
+    ON ct.academicTermID = at.academicTermID;
 
 -- Delete a course offering
 DELETE FROM CourseTerms
@@ -179,3 +187,28 @@ WHERE courseTermID = @courseTermID_selected;
 UPDATE CourseTerms
 SET instructorID = @newInstructorID
 WHERE courseTermID = @courseTermID_selected;
+
+-- STUDENT ENROLLMENTS (StudentHasCourses)
+
+-- Get all student enrollments for the Browse Enrollments page (use JOINs to make FKs user-friendly)
+SELECT
+    shc.studentID AS "Student ID",
+    CONCAT(s.firstName, ' ', s.lastName) AS "Student Name",
+    c.courseCode AS "Course Code",
+    c.courseTitle AS "Course Title",
+    at.termName AS "Term",
+    shc.courseTermID -- also hidden from front end but kept for backend operations
+FROM StudentHasCourses shc
+JOIN Students s 
+    ON shc.studentID = s.studentID
+JOIN CourseTerms ct 
+    ON shc.courseTermID = ct.courseTermID
+JOIN Courses c 
+    ON ct.courseID = c.courseID
+JOIN AcademicTerms at 
+    ON ct.academicTermID = at.academicTermID;
+
+-- Delete student's enrollment in a course
+DELETE FROM StudentHasCourses
+WHERE studentID = @studentID_selected
+  AND courseTermID = @courseTermID_selected;

@@ -4,13 +4,8 @@
 -- STUDENTS
 
 -- Get all students for the Browse Students page
-SELECT 
-    s.studentID AS "Student ID",
-    s.firstName AS "First Name",
-    s.lastName AS "Last Name",
-    s.email AS "Email",
-    s.major AS "Major"
-FROM Students s;
+SELECT studentID, firstName, lastName, email, major
+FROM Students;
 
 -- Get a single student's data for the Update Student form
 SELECT studentID, firstName, lastName, email, major
@@ -33,15 +28,19 @@ WHERE studentID = @studentID_selected_from_browse_page;
 
 -- COURSES
 
--- Get all courses for the Browse Courses page
+-- Get all courses for the Browse Courses page (JOIN to get department name)
 SELECT 
-    c.courseID AS "Course ID",
-    c.courseCode AS "Course Code",
-    c.courseTitle AS "Course Title",
-    c.courseCredit AS "Credits",
-    d.departmentName AS "Department"
+    c.courseID,
+    c.courseCode,
+    c.courseTitle,
+    c.courseCredit,
+    d.departmentName AS departmentName
 FROM Courses c
 JOIN Departments d ON c.departmentID = d.departmentID;
+
+-- Get all departments for the dropdown menu in the Course form
+SELECT departmentID, departmentName
+FROM Departments;
 
 -- Get a single course's data for the Update Course form
 SELECT courseID, courseCode, courseTitle, courseCredit, departmentID
@@ -64,18 +63,21 @@ WHERE courseID = @courseID_from_update_form;
 DELETE FROM Courses
 WHERE courseID = @courseID_selected_from_browse_page;
 
-
 -- INSTRUCTORS
 
--- Get all instructors for the Browse Instructors page
+-- Get all instructors for the Browse Instructors page (JOIN to get department name)
 SELECT 
-    i.instructorID AS "Instructor ID",
-    i.firstName AS "First Name",
-    i.lastName AS "Last Name",
-    i.email AS "Email",
-    d.departmentName AS "Department"
+    i.instructorID,
+    i.firstName,
+    i.lastName,
+    i.email,
+    d.departmentName AS departmentName
 FROM Instructors i
 JOIN Departments d ON i.departmentID = d.departmentID;
+
+-- Get all departments for the dropdown menu in the Instructor form
+SELECT departmentID, departmentName
+FROM Departments;
 
 -- Get a single instructor's data for the Update Instructor form
 SELECT instructorID, firstName, lastName, email, departmentID
@@ -98,14 +100,11 @@ WHERE instructorID = @instructorID_from_update_form;
 DELETE FROM Instructors
 WHERE instructorID = @instructorID_selected_from_browse_page;
 
-
 -- DEPARTMENTS
 
 -- Get all departments for the Browse Departments page
-SELECT 
-    d.departmentID AS "Department ID",
-    d.departmentName AS "Department Name"
-FROM Departments d;
+SELECT departmentID, departmentName
+FROM Departments;
 
 -- Get a single department's data for the Update Department form
 SELECT departmentID, departmentName
@@ -125,21 +124,11 @@ WHERE departmentID = @departmentID_from_update_form;
 DELETE FROM Departments
 WHERE departmentID = @departmentID_selected_from_browse_page;
 
--- Query for department dropdowns (used in Courses and Instructors)
-SELECT departmentID, departmentName
-FROM Departments;
-
-
 -- ACADEMIC TERMS
 
 -- Get all academic terms for the Browse Academic Terms page
-SELECT 
-    at.academicTermID AS "Academic Term ID",
-    at.termName AS "Term Name",
-    at.startDate AS "Start Date",
-    at.endDate AS "End Date",
-    at.year AS "Year"
-FROM AcademicTerms at;
+SELECT academicTermID, termName, startDate, endDate, year
+FROM AcademicTerms;
 
 -- Get a single academic term's data for the Update Academic Term form
 SELECT academicTermID, termName, startDate, endDate, year
@@ -164,13 +153,14 @@ WHERE academicTermID = @academicTermID_selected_from_browse_page;
 
 -- COURSE OFFERINGS (CourseTerms)
 
--- Get all course offerings for the Browse Course Offerings page (use JOINs to make FKs user-friendly)
+-- Get all course offerings for the Browse Course Offerings page (JOINs to make FKs user-friendly)
 SELECT
-    c.courseCode AS "Course Code",
-    c.courseTitle AS "Course Title",
-    CONCAT(i.firstName, ' ', i.lastName) AS "Instructor",
-    at.termName AS "Term",
-    ct.courseTermID -- not shown in front end but kept for backend operations (updates/deletes)
+    ct.courseTermID,
+    c.courseCode || ' - ' || c.courseTitle AS courseName,
+    CONCAT(i.firstName, ' ', i.lastName) AS instructorName,
+    at.termName,
+    at.startDate,
+    at.endDate
 FROM CourseTerms ct
 JOIN Courses c 
     ON ct.courseID = c.courseID
@@ -190,14 +180,13 @@ WHERE courseTermID = @courseTermID_selected;
 
 -- STUDENT ENROLLMENTS (StudentHasCourses)
 
--- Get all student enrollments for the Browse Enrollments page (use JOINs to make FKs user-friendly)
+-- Get all student enrollments for the Browse Enrollments page (JOINs to make FKs user-friendly)
 SELECT
-    shc.studentID AS "Student ID",
-    CONCAT(s.firstName, ' ', s.lastName) AS "Student Name",
-    c.courseCode AS "Course Code",
-    c.courseTitle AS "Course Title",
-    at.termName AS "Term",
-    shc.courseTermID -- also hidden from front end but kept for backend operations
+    shc.studentID,
+    CONCAT(s.firstName, ' ', s.lastName) AS studentName,
+    c.courseCode || ' - ' || c.courseTitle AS courseName,
+    shc.courseTermID,
+    at.termName
 FROM StudentHasCourses shc
 JOIN Students s 
     ON shc.studentID = s.studentID

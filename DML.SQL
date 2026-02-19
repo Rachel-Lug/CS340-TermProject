@@ -4,8 +4,13 @@
 -- STUDENTS
 
 -- Get all students for the Browse Students page
-SELECT studentID, firstName, lastName, email, major
-FROM Students;
+SELECT 
+    s.studentID AS "Student ID",
+    s.firstName AS "First Name",
+    s.lastName AS "Last Name",
+    s.email AS "Email",
+    s.major AS "Major"
+FROM Students s;
 
 -- Get a single student's data for the Update Student form
 SELECT studentID, firstName, lastName, email, major
@@ -29,8 +34,14 @@ WHERE studentID = @studentID_selected_from_browse_page;
 -- COURSES
 
 -- Get all courses for the Browse Courses page
-SELECT courseID, courseCode, courseTitle, courseCredit, departmentID
-FROM Courses;
+SELECT 
+    c.courseID AS "Course ID",
+    c.courseCode AS "Course Code",
+    c.courseTitle AS "Course Title",
+    c.courseCredit AS "Credits",
+    d.departmentName AS "Department"
+FROM Courses c
+JOIN Departments d ON c.departmentID = d.departmentID;
 
 -- Get all departments for the dropdown menu in the Course form
 SELECT departmentID, departmentName
@@ -61,8 +72,14 @@ WHERE courseID = @courseID_selected_from_browse_page;
 -- INSTRUCTORS
 
 -- Get all instructors for the Browse Instructors page
-SELECT instructorID, firstName, lastName, email, departmentID
-FROM Instructors;
+SELECT 
+    i.instructorID AS "Instructor ID",
+    i.firstName AS "First Name",
+    i.lastName AS "Last Name",
+    i.email AS "Email",
+    d.departmentName AS "Department"
+FROM Instructors i
+JOIN Departments d ON i.departmentID = d.departmentID;
 
 -- Get all departments for the dropdown menu in the Instructor form
 SELECT departmentID, departmentName
@@ -93,8 +110,10 @@ WHERE instructorID = @instructorID_selected_from_browse_page;
 -- DEPARTMENTS
 
 -- Get all departments for the Browse Departments page
-SELECT departmentID, departmentName
-FROM Departments;
+SELECT 
+    d.departmentID AS "Department ID",
+    d.departmentName AS "Department Name"
+FROM Departments d;
 
 -- Get a single department's data for the Update Department form
 SELECT departmentID, departmentName
@@ -118,8 +137,13 @@ WHERE departmentID = @departmentID_selected_from_browse_page;
 -- ACADEMIC TERMS
 
 -- Get all academic terms for the Browse Academic Terms page
-SELECT academicTermID, termName, startDate, endDate, year
-FROM AcademicTerms;
+SELECT 
+    at.academicTermID AS "Academic Term ID",
+    at.termName AS "Term Name",
+    at.startDate AS "Start Date",
+    at.endDate AS "End Date",
+    at.year AS "Year"
+FROM AcademicTerms at;
 
 -- Get a single academic term's data for the Update Academic Term form
 SELECT academicTermID, termName, startDate, endDate, year
@@ -141,3 +165,17 @@ WHERE academicTermID = @academicTermID_from_update_form;
 -- Delete an academic term
 DELETE FROM AcademicTerms
 WHERE academicTermID = @academicTermID_selected_from_browse_page;
+
+-- Delete student's enrollment in a course
+DELETE FROM StudentHasCourses
+WHERE studentID = @studentID_selected
+  AND courseTermID = @courseTermID_selected;
+
+-- Delete a course offering
+DELETE FROM CourseTerms
+WHERE courseTermID = @courseTermID_selected;
+
+-- Update the instructor for a specific course offering
+UPDATE CourseTerms
+SET instructorID = @newInstructorID
+WHERE courseTermID = @courseTermID_selected;

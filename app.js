@@ -133,7 +133,11 @@ app.get('/AcademicTerms', async function (req, res) {
     try {
         // Query to get all academic terms
         const query = `
-            SELECT academicTermId, termName, startDate, endDate, year
+            SELECT academicTermId, 
+            termName, 
+            DATE_FORMAT(startDate, '%Y-%m-%d') AS startDate,
+            DATE_FORMAT(endDate, '%Y-%m-%d') AS endDate,
+            year
             FROM AcademicTerms;
         `;
 
@@ -169,31 +173,7 @@ app.get('/studentcourses', async (req, res) => {
 
     res.render('studentcourses', { studentcourses: rows });
 });
-app.get('/courseTerms', async (req, res) => {
-    try {
-        const [rows] = await db.query(`
-            SELECT 
-                ct.courseTermID,
-                c.courseTitle AS courseName,
-                a.termName AS academicTerm,
-                i.firstName AS instructorFirstName,
-                i.lastName AS instructorLastName
-            FROM CourseTerms ct
-            JOIN Courses c
-                ON ct.courseID = c.courseID
-            JOIN AcademicTerms a
-                ON ct.academicTermID = a.academicTermID
-            JOIN Instructors i
-                ON ct.instructorID = i.instructorID
-            ORDER BY c.courseTitle, a.termName
-        `);
-
-        res.render('courseTerms', { courseTerms: rows });
-    } catch (err) {
-        console.error('SQL ERROR:', err);
-        res.status(500).send('Failed to load course terms');
-    }
-});
+//
 //------------------------------------------------------------------------------------------
 //Below is the CRUD for all sections
 // =====================
@@ -343,23 +323,38 @@ app.post('/studentcourses/delete', async (req, res) => {
 //========================
 // CREATE Course Terms
 //========================
-app.get('/courseTerms/add', async (req, res) => {
+app.get('/courseTerms', async (req, res) => {
     try {
-        res.render('add-courseterm'); // Render a form specifically for adding CourseTerms
+        const [rows] = await db.query(`
+            SELECT 
+                ct.courseTermID,
+                c.courseTitle AS courseName,
+                at.termName,
+                DATE_FORMAT(at.startDate, '%Y-%m-%d') AS startDate,
+                DATE_FORMAT(at.endDate, '%Y-%m-%d') AS endDate
+            FROM CourseTerms ct
+            JOIN Courses c 
+                ON ct.courseID = c.courseID
+            JOIN AcademicTerms at 
+                ON ct.academicTermID = at.academicTermID
+        `);
+
+        res.render('courseTerms', { courseTerms: rows });
+
     } catch (err) {
         console.error(err);
-        res.status(500).send('Failed to load add course term page');
+        res.status(500).send('Failed to load course terms');
     }
 });
 
 app.post('/courseTerms/add', async (req, res) => {
     try {
-        const { courseID, termName, startDate, endDate } = req.body;
+        const { courseID, academicTermID, instructorID } = req.body;
 
-        await db.query(
-            `INSERT INTO CourseTerms (courseID, termName, startDate, endDate)
-             VALUES (?, ?, ?, ?)`,
-            [courseID, termName, startDate, endDate]
+    await db.query(
+         `INSERT INTO CourseTerms (courseID, academicTermID, instructorID)
+             VALUES (?, ?, ?)`,
+         [courseID, academicTermID, instructorID]
         );
 
         res.redirect('/courseTerms'); // Redirect to your CourseTerms list page

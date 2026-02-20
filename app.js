@@ -224,7 +224,7 @@ app.post('/students/delete', async (req, res) => {
             [studentId]
         );
 
-        res.redirect('/Students');
+        res.redirect('/students');
     } catch (err) {
         console.error(err);
         res.status(500).send('Failed to delete student.');
@@ -234,47 +234,167 @@ app.post('/students/delete', async (req, res) => {
 // =====================
 // CREATE a instructor
 // =====================
+app.post('/instructors/create', async (req, res) => {
+    try {
+        const { firstName, lastName, email, departmentID } = req.body;
+
+        await db.query(
+            `INSERT INTO Instructors (firstName, lastName, email, departmentID) VALUES (?, ?, ?, ?)`,
+            [firstName, lastName, email, departmentID]
+        );
+
+        res.redirect('/instructors');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to create instructor.');
+    }
+});
+
 // =====================
 // UPDATE a instructor
 // =====================
+app.post('/instructors/update', async (req, res) => {
+    try {
+        const { instructorID, email, departmentID } = req.body;
+
+        await db.query(
+            `UPDATE Instructors SET email = ?, departmentID = ? WHERE instructorID = ?`,
+            [email, departmentID, instructorID]
+        );
+
+        res.redirect('/instructors');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to update instructor.');
+    }
+});
+
+    
 // =====================
 // DELETE a instructor
 // =====================
+app.post('/instructors/delete', async (req, res) => {
+    try {
+        const { instructorID } = req.body;
+
+        await db.query(
+            `DELETE FROM Instructors WHERE instructorID = ?`,
+            [instructorID]
+        );
+
+        res.redirect('/instructors');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to update instructor.');
+    }
+});
 
 
 // =====================
 // CREATE a course
 // =====================
+app.post('/courses/create', async (req, res) => {
+    try {
+        const { courseCode, courseTitle, credits, departmentID } = req.body;
+
+        await db.query(
+            `INSERT INTO Courses (courseCode, courseTitle, credits, departmentID) VALUES (?, ?, ?, ?)`,
+            [courseCode, courseTitle, credits, departmentID]
+        );
+
+        res.redirect('/courses');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to create course.');
+    }
+});
+
 // =====================
 // UPDATE a course
 // =====================
+app.post('/courses/update', async (req, res) => {
+    try {
+        const { courseID, courseTitle, credits, departmentID } = req.body;
+        await db.query(
+            `UPDATE Courses SET courseCode = ?, courseTitle = ?, credits = ?, departmentID = ? WHERE courseID = ?`,
+            [courseCode, courseTitle, credits, departmentID, courseID]
+        );
+        res.redirect('/courses');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to update course.');
+    }
+});
+
 // =====================
 // DELETE a course
 // =====================
+app.post('/courses/delete', async (req, res) => {
+    try {
+        const { courseID } = req.body;
 
+        await db.query(
+            `DELETE FROM Courses WHERE courseID = ?`,
+            [courseID]
+        );
+
+        res.redirect('/courses');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to delete course.');
+    }
+});
 
 // =====================
 // CREATE a department
 // =====================
+app.post('/departments/create', async (req, res) => {
+    try {
+        const { departmentName } = req.body;
+        await db.query(
+            `INSERT INTO Departments (departmentName) VALUES (?)`,
+            [departmentName]
+        );
+        res.redirect('/departments');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to create department.');
+    }
+});
+
 // =====================
 // UPDATE a department
 // =====================
+app.post('/departments/update', async (req, res) => {
+    try {
+        const { departmentID, departmentName } = req.body;
+        await db.query(
+            `UPDATE Departments SET departmentName = ? WHERE departmentID = ?`,
+            [departmentName, departmentID]
+        );
+        res.redirect('/departments');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to update department.');
+    }
+});
+
 // =====================
 // DELETE a department
 // =====================
-
-
-// =====================
-// CREATE a academic term
-// =====================
-// =====================
-// UPDATE a academic term
-// =====================
-// =====================
-// DELETE a academic term
-// =====================
-
-
+app.post('/departments/delete', async (req, res) => {
+    try {
+        const { departmentID } = req.body;
+        await db.query(
+            `DELETE FROM Departments WHERE departmentID = ?`,
+            [departmentID]
+        );
+        res.redirect('/departments');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to delete department.');
+    }
+});
 
 //========================
 // CREATE students courses 

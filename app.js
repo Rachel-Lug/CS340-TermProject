@@ -8,22 +8,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-const PORT = 12550;
+const PORT = 8245;
 
 // Database
 const db = require('./database/db-connector');
 
 // Handlebars
 const { engine } = require('express-handlebars'); // Import express-handlebars engine
-
-app.engine('.hbs', engine({
-    extname: '.hbs',
-    helpers: {
-        eq: (a, b) => a == b // helper for comparing values in templates
-    }
-}));
-
-app.set('view engine', '.hbs'); // Use handlebars engine for *.hbs files
+app.engine('.hbs', engine({ extname: '.hbs' })); // Create instance of handlebars
+app.set('view engine', '.hbs'); // Use handlebars engine for *.hbs files.
 
 // ########################################
 // ########## ROUTE HANDLERS
@@ -162,28 +155,23 @@ app.get('/AcademicTerms', async function (req, res) {
 });
 
 app.get('/studentcourses', async (req, res) => {
-    try {
-        const [rows] = await db.query(`
-            SELECT
-                CONCAT(s.firstName, ' ', s.lastName) AS studentName,
-                c.courseTitle AS courseName,
-                shc.studentID,
-                shc.courseTermID
-            FROM StudentHasCourses shc
-            JOIN Students s
-                ON shc.studentID = s.studentId
-            JOIN CourseTerms ct
-                ON shc.courseTermID = ct.courseTermID
-            JOIN Courses c
-                ON ct.courseID = c.courseID
-            ORDER BY c.courseTitle, s.lastName
-        `);
+    const [rows] = await db.query(`
+        SELECT
+            CONCAT(s.firstName, ' ', s.lastName) AS studentName,
+            c.courseTitle AS courseName,
+            shc.studentID,
+            shc.courseTermID
+        FROM StudentHasCourses shc
+        JOIN Students s
+            ON shc.studentID = s.studentID
+        JOIN CourseTerms ct
+            ON shc.courseTermID = ct.courseTermID
+        JOIN Courses c
+            ON ct.courseID = c.courseID
+        ORDER BY c.courseTitle, s.lastName
+    `);
 
-        res.render('studentcourses', { studentcourses: rows });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to load student courses');
-    }
+    res.render('studentcourses', { studentcourses: rows });
 });
 //
 //------------------------------------------------------------------------------------------
@@ -236,7 +224,7 @@ app.post('/students/delete', async (req, res) => {
             [studentId]
         );
 
-        res.redirect('/students');
+        res.redirect('/Students');
     } catch (err) {
         console.error(err);
         res.status(500).send('Failed to delete student.');
@@ -246,167 +234,47 @@ app.post('/students/delete', async (req, res) => {
 // =====================
 // CREATE a instructor
 // =====================
-app.post('/instructors/create', async (req, res) => {
-    try {
-        const { firstName, lastName, email, departmentID } = req.body;
-
-        await db.query(
-            `INSERT INTO Instructors (firstName, lastName, email, departmentID) VALUES (?, ?, ?, ?)`,
-            [firstName, lastName, email, departmentID]
-        );
-
-        res.redirect('/instructors');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to create instructor.');
-    }
-});
-
 // =====================
 // UPDATE a instructor
 // =====================
-app.post('/instructors/update', async (req, res) => {
-    try {
-        const { instructorID, email, departmentID } = req.body;
-
-        await db.query(
-            `UPDATE Instructors SET email = ?, departmentID = ? WHERE instructorID = ?`,
-            [email, departmentID, instructorID]
-        );
-
-        res.redirect('/instructors');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to update instructor.');
-    }
-});
-
-    
 // =====================
 // DELETE a instructor
 // =====================
-app.post('/instructors/delete', async (req, res) => {
-    try {
-        const { instructorID } = req.body;
-
-        await db.query(
-            `DELETE FROM Instructors WHERE instructorID = ?`,
-            [instructorID]
-        );
-
-        res.redirect('/instructors');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to update instructor.');
-    }
-});
 
 
 // =====================
 // CREATE a course
 // =====================
-app.post('/courses/create', async (req, res) => {
-    try {
-        const { courseCode, courseTitle, credits, departmentID } = req.body;
-
-        await db.query(
-            `INSERT INTO Courses (courseCode, courseTitle, credits, departmentID) VALUES (?, ?, ?, ?)`,
-            [courseCode, courseTitle, credits, departmentID]
-        );
-
-        res.redirect('/courses');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to create course.');
-    }
-});
-
 // =====================
 // UPDATE a course
 // =====================
-app.post('/courses/update', async (req, res) => {
-    try {
-        const { courseID, courseTitle, credits, departmentID } = req.body;
-        await db.query(
-            `UPDATE Courses SET courseCode = ?, courseTitle = ?, credits = ?, departmentID = ? WHERE courseID = ?`,
-            [courseCode, courseTitle, credits, departmentID, courseID]
-        );
-        res.redirect('/courses');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to update course.');
-    }
-});
-
 // =====================
 // DELETE a course
 // =====================
-app.post('/courses/delete', async (req, res) => {
-    try {
-        const { courseID } = req.body;
 
-        await db.query(
-            `DELETE FROM Courses WHERE courseID = ?`,
-            [courseID]
-        );
-
-        res.redirect('/courses');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to delete course.');
-    }
-});
 
 // =====================
 // CREATE a department
 // =====================
-app.post('/departments/create', async (req, res) => {
-    try {
-        const { departmentName } = req.body;
-        await db.query(
-            `INSERT INTO Departments (departmentName) VALUES (?)`,
-            [departmentName]
-        );
-        res.redirect('/departments');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to create department.');
-    }
-});
-
 // =====================
 // UPDATE a department
 // =====================
-app.post('/departments/update', async (req, res) => {
-    try {
-        const { departmentID, departmentName } = req.body;
-        await db.query(
-            `UPDATE Departments SET departmentName = ? WHERE departmentID = ?`,
-            [departmentName, departmentID]
-        );
-        res.redirect('/departments');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to update department.');
-    }
-});
-
 // =====================
 // DELETE a department
 // =====================
-app.post('/departments/delete', async (req, res) => {
-    try {
-        const { departmentID } = req.body;
-        await db.query(
-            `DELETE FROM Departments WHERE departmentID = ?`,
-            [departmentID]
-        );
-        res.redirect('/departments');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to delete department.');
-    }
-});
+
+
+// =====================
+// CREATE a academic term
+// =====================
+// =====================
+// UPDATE a academic term
+// =====================
+// =====================
+// DELETE a academic term
+// =====================
+
+
 
 //========================
 // CREATE students courses 
@@ -457,13 +325,11 @@ app.post('/studentcourses/delete', async (req, res) => {
 //========================
 app.get('/courseTerms', async (req, res) => {
     try {
-        const [courseTerms] = await db.query(`
+        const [rows] = await db.query(`
             SELECT 
                 ct.courseTermID,
                 c.courseTitle AS courseName,
                 at.termName,
-                ct.instructorID,
-                CONCAT(i.firstName, ' ', i.lastName) AS instructorName,
                 DATE_FORMAT(at.startDate, '%Y-%m-%d') AS startDate,
                 DATE_FORMAT(at.endDate, '%Y-%m-%d') AS endDate
             FROM CourseTerms ct
@@ -471,18 +337,10 @@ app.get('/courseTerms', async (req, res) => {
                 ON ct.courseID = c.courseID
             JOIN AcademicTerms at 
                 ON ct.academicTermID = at.academicTermID
-            LEFT JOIN Instructors i
-                ON ct.instructorID = i.instructorID
-            ORDER BY c.courseTitle, at.termName
         `);
 
-        const [instructors] = await db.query(`
-            SELECT instructorID, firstName, lastName
-            FROM Instructors
-            ORDER BY lastName, firstName
-        `);
+        res.render('courseTerms', { courseTerms: rows });
 
-        res.render('courseTerms', { courseTerms, instructors });
     } catch (err) {
         console.error(err);
         res.status(500).send('Failed to load course terms');
@@ -524,22 +382,17 @@ app.post('/courseTerms/delete', async (req, res) => {
         res.status(500).send('Failed to delete course term');
     }
 });
-//========================
-// UPDATE Course Terms
-//========================
-app.post('/courseTerms/update', async (req, res) => {
+
+//=============================
+// BACKEND FOR RESET
+//=============================
+app.post('/reset', async (req, res) => {
     try {
-        const { courseTermID, newInstructorID } = req.body;
-
-        await db.query(
-            `UPDATE CourseTerms SET instructorID = ? WHERE courseTermID = ?`,
-            [newInstructorID, courseTermID]
-        );
-
-        res.redirect('/courseTerms');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to update instructor for course term');
+        await db.query('CALL sp_reset_database();');
+        res.redirect('/');
+    } catch (error) {
+        console.error("RESET ERROR:", error);
+        res.send(error.message);   // <-- show real error
     }
 });
 

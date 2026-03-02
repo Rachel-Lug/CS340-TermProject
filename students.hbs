@@ -9,7 +9,7 @@
                 {{@key}}
             </th>
             {{/each}}
-            <th>Delete</th>
+            <th></th>
         </tr>
     </thead>
 
@@ -24,12 +24,11 @@
             <td>{{major}}</td>
 
            <!-- DELETE FORM -->
-           <td>
-                <form method="POST" action="/students/delete" style="display:inline">
-                    <input type="hidden" name="studentId" value="{{studentId}}" />
+            <td>
+                <form method="POST" action="/delete-student/{{studentId}}" style="display:inline">
                     <button type="submit">Delete</button>
                 </form>
-            </td>
+             </td>
         </tr>
         {{/each}}
     </tbody>

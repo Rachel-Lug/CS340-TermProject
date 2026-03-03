@@ -8,15 +8,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-const PORT = 8245;
+const PORT = 12550;
 
 // Database
 const db = require('./database/db-connector');
 
 // Handlebars
 const { engine } = require('express-handlebars'); // Import express-handlebars engine
-app.engine('.hbs', engine({ extname: '.hbs' })); // Create instance of handlebars
-app.set('view engine', '.hbs'); // Use handlebars engine for *.hbs files.
+
+app.engine('.hbs', engine({
+    extname: '.hbs',
+    helpers: {
+        eq: (a, b) => a == b // helper for comparing values in templates
+    }
+}));
+
+app.set('view engine', '.hbs'); // Use handlebars engine for *.hbs files
 
 // ########################################
 // ########## ROUTE HANDLERS
@@ -36,7 +43,7 @@ app.get('/Students', async function (req, res) {
     try {
         // Query to get all students
         const query = `
-            SELECT studentId, firstName, lastName, email, major
+            SELECT studentID, firstName, lastName, email, major
             FROM Students;
         `;
 
@@ -57,14 +64,14 @@ app.get('/courses', async function (req, res) {
     try {
         // Query to get all courses
         const query = `
-            SELECT courseId, courseCode, courseTitle, courseCredit, departmentId
+            SELECT courseId, courseCode, courseTitle, courseCredit, departmentID
             FROM Courses;
         `;
 
         const departmentsQuery = `
-            SELECT departmentId, departmentName
+            SELECT departmentID, departmentName
             FROM Departments
-            ORDER BY departmentId ASC;
+            ORDER BY departmentID ASC;
         `;
         // Execute the queries
         const [courses] = await db.query(query);
@@ -84,7 +91,7 @@ app.get('/Departments', async function (req, res) {
     try {
         // Query to get all departments
         const query = `
-            SELECT departmentId, departmentName
+            SELECT departmentID, departmentName
             FROM Departments;
         `;
 
@@ -105,14 +112,14 @@ app.get('/Instructors', async function (req, res) {
     try {
         // Query to get all instructors
         const query = `
-            SELECT instructorId, firstName, lastName, email, departmentId
+            SELECT instructorID, firstName, lastName, email, departmentID
             FROM Instructors;
         `;
 
         const departmentsQuery = `
-            SELECT departmentId, departmentName
+            SELECT departmentID, departmentName
             FROM Departments
-            ORDER BY departmentId ASC;
+            ORDER BY departmentID ASC;
         `;
 
         // Execute the queries
@@ -155,23 +162,28 @@ app.get('/AcademicTerms', async function (req, res) {
 });
 
 app.get('/studentcourses', async (req, res) => {
-    const [rows] = await db.query(`
-        SELECT
-            CONCAT(s.firstName, ' ', s.lastName) AS studentName,
-            c.courseTitle AS courseName,
-            shc.studentID,
-            shc.courseTermID
-        FROM StudentHasCourses shc
-        JOIN Students s
-            ON shc.studentID = s.studentID
-        JOIN CourseTerms ct
-            ON shc.courseTermID = ct.courseTermID
-        JOIN Courses c
-            ON ct.courseID = c.courseID
-        ORDER BY c.courseTitle, s.lastName
-    `);
+    try {
+        const [rows] = await db.query(`
+            SELECT
+                CONCAT(s.firstName, ' ', s.lastName) AS studentName,
+                c.courseTitle AS courseName,
+                shc.studentID,
+                shc.courseTermID
+            FROM StudentHasCourses shc
+            JOIN Students s
+                ON shc.studentID = s.studentID
+            JOIN CourseTerms ct
+                ON shc.courseTermID = ct.courseTermID
+            JOIN Courses c
+                ON ct.courseID = c.courseID
+            ORDER BY c.courseTitle, s.lastName
+        `);
 
-    res.render('studentcourses', { studentcourses: rows });
+        res.render('studentcourses', { studentcourses: rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to load student courses');
+    }
 });
 //
 //------------------------------------------------------------------------------------------
@@ -199,11 +211,11 @@ app.post('/students/create', async (req, res) => {
 // =====================
 app.post('/students/update', async (req, res) => {
     try {
-        const { studentId, email, major } = req.body;
+        const { studentID, email, major } = req.body;
 
         await db.query(
-            `UPDATE Students SET email = ?, major = ? WHERE studentId = ?`,
-            [email, major, studentId]
+            `UPDATE Students SET email = ?, major = ? WHERE studentID = ?`,
+            [email, major, studentID]
         );
 
         res.redirect('/Students');
@@ -215,13 +227,19 @@ app.post('/students/update', async (req, res) => {
 // =====================
 // DELETE a Student
 // =====================
-app.post('/delete-student/:id', async (req, res) => {
+app.post('/students/delete', async (req, res) => {
     try {
-    await db.query('CALL delete_student(?)', [req.params.id]);       
-     res.redirect('/students');
-    } catch (error) {
-        console.error(error);
-        res.send(error.message);
+        const { studentID } = req.body;
+
+        await db.query(
+            `DELETE FROM Students WHERE studentID = ?`,
+            [studentID]
+        );
+
+        res.redirect('/students');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to delete student.');
     }
 });
 
@@ -289,7 +307,7 @@ app.post('/instructors/delete', async (req, res) => {
 // =====================
 app.post('/courses/create', async (req, res) => {
     try {
-        const { courseCode, courseTitle, credits, departmentID } = req.body;
+        const { courseCode, courseTitle, courseCredit, departmentID } = req.body;
 
         await db.query(
             `INSERT INTO Courses (courseCode, courseTitle, credits, departmentID) VALUES (?, ?, ?, ?)`,
@@ -439,11 +457,13 @@ app.post('/studentcourses/delete', async (req, res) => {
 //========================
 app.get('/courseTerms', async (req, res) => {
     try {
-        const [rows] = await db.query(`
+        const [courseTerms] = await db.query(`
             SELECT 
                 ct.courseTermID,
                 c.courseTitle AS courseName,
                 at.termName,
+                ct.instructorID,
+                CONCAT(i.firstName, ' ', i.lastName) AS instructorName,
                 DATE_FORMAT(at.startDate, '%Y-%m-%d') AS startDate,
                 DATE_FORMAT(at.endDate, '%Y-%m-%d') AS endDate
             FROM CourseTerms ct
@@ -451,10 +471,18 @@ app.get('/courseTerms', async (req, res) => {
                 ON ct.courseID = c.courseID
             JOIN AcademicTerms at 
                 ON ct.academicTermID = at.academicTermID
+            LEFT JOIN Instructors i
+                ON ct.instructorID = i.instructorID
+            ORDER BY c.courseTitle, at.termName
         `);
 
-        res.render('courseTerms', { courseTerms: rows });
+        const [instructors] = await db.query(`
+            SELECT instructorID, firstName, lastName
+            FROM Instructors
+            ORDER BY lastName, firstName
+        `);
 
+        res.render('courseTerms', { courseTerms, instructors });
     } catch (err) {
         console.error(err);
         res.status(500).send('Failed to load course terms');
@@ -494,6 +522,24 @@ app.post('/courseTerms/delete', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send('Failed to delete course term');
+    }
+});
+//========================
+// UPDATE Course Terms
+//========================
+app.post('/courseTerms/update', async (req, res) => {
+    try {
+        const { courseTermID, newInstructorID } = req.body;
+
+        await db.query(
+            `UPDATE CourseTerms SET instructorID = ? WHERE courseTermID = ?`,
+            [newInstructorID, courseTermID]
+        );
+
+        res.redirect('/courseTerms');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to update instructor for course term');
     }
 });
 

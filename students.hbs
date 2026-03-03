@@ -9,7 +9,7 @@
                 {{@key}}
             </th>
             {{/each}}
-            <th></th>
+            <th>Delete</th>
         </tr>
     </thead>
 
@@ -17,18 +17,19 @@
         {{! For each row, print the id, fname, lname, homeworld and age }}
         {{#each students}}
         <tr>
-            <td>{{studentId}}</td>
+            <td>{{studentID}}</td>
             <td>{{firstName}}</td>
             <td>{{lastName}}</td>
             <td>{{email}}</td>
             <td>{{major}}</td>
 
            <!-- DELETE FORM -->
-            <td>
-                <form method="POST" action="/delete-student/{{studentId}}" style="display:inline">
+           <td>
+                <form method="POST" action="/students/delete" style="display:inline">
+                    <input type="hidden" name="studentID" value="{{studentID}}" />
                     <button type="submit">Delete</button>
                 </form>
-             </td>
+            </td>
         </tr>
         {{/each}}
     </tbody>
@@ -57,10 +58,10 @@
 <h2>Update a Student</h2>
 <form method="POST" action="/students/update">
     <label>Student:</label>
-    <select name="studentId" required>
+    <select name="studentID" required>
         <option value="" disabled selected>Select a student</option>
         {{#each students}}
-        <option value="{{studentId}}">{{studentId}} - {{firstName}} {{lastName}}</option>
+        <option value="{{studentID}}">{{studentID}} - {{firstName}} {{lastName}}</option>
         {{/each}}
     </select>
     
@@ -70,5 +71,5 @@
     <label>New Major:</label>
     <input type="text" name="major" />
     
-    <input type="submit" value="Update Student" />
+    <input type="studentIDubmit" value="Update Student" />
 </form>

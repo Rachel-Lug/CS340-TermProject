@@ -15,16 +15,16 @@
     <tbody>
         {{#each instructors}}
         <tr>
-            <td>{{instructorId}}</td>
+            <td>{{instructorID}}</td>
             <td>{{firstName}}</td>
             <td>{{lastName}}</td>
             <td>{{email}}</td>
-            <td>{{departmentId}}</td>
+            <td>{{departmentID}}</td>
 
             <!-- DELETE FORM -->
            <td>
                 <form method="POST" action="/instructors/delete" style="display:inline">
-                    <input type="hidden" name="instructorId" value="{{instructorId}}" />
+                    <input type="hidden" name="instructorID" value="{{instructorID}}" />
                     <button type="submit">Delete</button>
                 </form>
             </td>
@@ -46,9 +46,9 @@
     <input type="text" name="email" />
     
     <label>Department</label>
-    <select name="departmentId">
+    <select name="departmentID">
         {{#each departments}}
-        <option value="{{departmentId}}">{{departmentName}}</option>
+        <option value="{{departmentID}}">{{departmentName}}</option>
         {{/each}}
     </select>
     
@@ -59,10 +59,10 @@
 <h2>Update an Instructor</h2>
 <form method="POST" action="/instructors/update">
     <label>Instructor:</label>
-    <select name="instructorId" required>
+    <select name="instructorID" required>
         <option value="" disabled selected>Select an instructor</option>
         {{#each instructors}}
-        <option value="{{instructorId}}">{{instructorId}} - {{firstName}} {{lastName}}</option>
+        <option value="{{instructorID}}">{{instructorID}} - {{firstName}} {{lastName}}</option>
         {{/each}}
     </select>
     
@@ -70,9 +70,9 @@
     <input type="text" name="email" />
     
     <label>New Department:</label>
-    <select name="departmentId">
+    <select name="departmentID">
         {{#each departments}}
-        <option value="{{departmentId}}">{{departmentName}}</option>
+        <option value="{{departmentID}}">{{departmentName}}</option>
         {{/each}}
     </select>
 

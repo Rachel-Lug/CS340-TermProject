@@ -19,7 +19,7 @@
             <td>{{courseCode}}</td>
             <td>{{courseTitle}}</td>
             <td>{{courseCredit}}</td>
-            <td>{{departmentId}}</td>
+            <td>{{departmentID}}</td>
 
             <!-- DELETE FORM -->
            <td>
@@ -46,9 +46,9 @@
     <input type="number" name="courseCredit" required />
     
     <label>Department</label>
-    <select name="departmentId">
+    <select name="departmentID">
         {{#each departments}}
-        <option value="{{departmentId}}">{{departmentName}}</option>
+        <option value="{{departmentID}}">{{departmentName}}</option>
         {{/each}}
     </select>
     
@@ -56,7 +56,7 @@
 </form>
 
 <!-- ===================== UPDATE FORM ===================== -->
-<h2>Update an Course</h2>
+<h2>Update a Course</h2>
 <form method="POST" action="/courses/update">
     <label>Course:</label>
     <select name="courseId" required>
@@ -73,9 +73,9 @@
     <input type="text" name="courseTitle" />
     
     <label>New Department:</label>
-    <select name="departmentId">
+    <select name="departmentID">
         {{#each departments}}
-        <option value="{{departmentId}}">{{departmentName}}</option>
+        <option value="{{departmentID}}">{{departmentName}}</option>
         {{/each}}
     </select>
     

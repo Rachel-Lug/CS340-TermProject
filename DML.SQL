@@ -168,7 +168,7 @@ WHERE academicTermID = @academicTermID_selected_from_browse_page;
 -- Get all course offerings for the Browse Course Offerings page (JOINs to make FKs user-friendly)
 SELECT
     ct.courseTermID AS ID,
-    c.courseCode || ' - ' || c.courseTitle AS 'Course Name',
+    CONCAT(c.courseCode, ' - ', c.courseTitle) AS 'Course Name',
     CONCAT(i.firstName, ' ', i.lastName) AS 'Instructor Name',
     at.termName AS 'Term',
     at.startDate AS 'Start Date',
@@ -193,7 +193,7 @@ WHERE courseTermID = @courseTermID_selected;
 SELECT
     shc.studentID AS ID,
     CONCAT(s.firstName, ' ', s.lastName) AS 'Student Name',
-    c.courseCode || ' - ' || c.courseTitle AS 'Course Name',
+    CONCAT(c.courseCode, ' - ', c.courseTitle) AS 'Course Name',
     shc.courseTermID AS 'Course Term ID',
     at.termName AS Term
 FROM StudentHasCourses shc

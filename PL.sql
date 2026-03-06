@@ -1,5 +1,5 @@
 DROP PROCEDURE IF EXISTS sp_load_classdb;
-DROP PROCEDURE IF EXISTS delete_John_Miller;
+DROP PROCEDURE IF EXISTS delete_student;
 
 DELIMITER //
 

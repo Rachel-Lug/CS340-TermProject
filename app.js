@@ -481,8 +481,25 @@ app.get('/courseTerms', async (req, res) => {
             FROM Instructors
             ORDER BY lastName, firstName
         `);
+        
+        const [courses] = await db.query(`
+            SELECT courseID, courseName
+            FROM Courses
+            ORDER BY courseName;
+        `);
 
-        res.render('courseTerms', { courseTerms, instructors });
+        const [academicTerms] = await db.query(`
+            SELECT academicTermID, termName
+            FROM AcademicTerms
+            ORDER BY termName;
+        `);
+
+        res.render('courseTerms', { 
+            courseTerms, 
+            instructors,
+            courses,
+            academicTerms,
+         });
     } catch (err) {
         console.error(err);
         res.status(500).send('Failed to load course terms');
@@ -494,6 +511,7 @@ app.post('/courseTerms/add', async (req, res) => {
         const { courseID, academicTermID, instructorID } = req.body;
 
     await db.query(
+        // edit to call procedure
          `INSERT INTO CourseTerms (courseID, academicTermID, instructorID)
              VALUES (?, ?, ?)`,
          [courseID, academicTermID, instructorID]
@@ -514,6 +532,7 @@ app.post('/courseTerms/delete', async (req, res) => {
         const { courseTermID } = req.body;
 
         await db.query(
+            // edit to call procedure
             `DELETE FROM CourseTerms WHERE courseTermID = ?`,
             [courseTermID]
         );
@@ -532,6 +551,7 @@ app.post('/courseTerms/update', async (req, res) => {
         const { courseTermID, newInstructorID } = req.body;
 
         await db.query(
+            // edit to call procedure
             `UPDATE CourseTerms SET instructorID = ? WHERE courseTermID = ?`,
             [newInstructorID, courseTermID]
         );

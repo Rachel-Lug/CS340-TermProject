@@ -548,7 +548,7 @@ app.post('/courseTerms/update', async (req, res) => {
 //=============================
 app.post('/reset', async (req, res) => {
     try {
-        await db.query('CALL sp_reset_database();');
+        await db.query('CALL sp_load_classdb();');
         res.redirect('/');
     } catch (error) {
         console.error("RESET ERROR:", error);

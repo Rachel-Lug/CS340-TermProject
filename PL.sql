@@ -186,7 +186,6 @@ END//
 
 -- -----------------------------------------------------
 -- Demo CUD delete procedure to show RESET works
--- Deletes John Miller from the Students table
 -- -----------------------------------------------------
 CREATE PROCEDURE delete_student(IN p_studentID INT)
 BEGIN
@@ -194,4 +193,21 @@ BEGIN
     WHERE studentID = p_studentID;
 END //
 
+-- -----------------------------------------------------
+-- M:M procedures that are required
+-- -----------------------------------------------------
+CREATE PROCEDURE mm_delete
+BEGIN
+    -- 
+END //
+
+CREATE PROCEDURE mm_select
+BEGIN
+    -- 
+END //
+
+CREATE PROCEDURE mm_update
+BEGIN
+    -- 
+END //
 DELIMITER ;

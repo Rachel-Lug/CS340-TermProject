@@ -196,12 +196,12 @@ END //
 -- -----------------------------------------------------
 -- M:M procedures that are required
 -- -----------------------------------------------------
-CREATE PROCEDURE mm_delete
+CREATE PROCEDURE mm_insert
 BEGIN
     -- 
 END //
 
-CREATE PROCEDURE mm_select
+CREATE PROCEDURE mm_delete
 BEGIN
     -- 
 END //

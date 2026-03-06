@@ -1,5 +1,8 @@
 DROP PROCEDURE IF EXISTS sp_load_classdb;
-DROP PROCEDURE IF EXISTS delete_student;
+DROP PROCEDURE IF EXISTS sp_delete_student;
+DROP PROCEDURE IF EXISTS sp_insert_courseterm;
+DROP PROCEDURE IF EXISTS sp_delete_courseterm;
+DROP PROCEDURE IF EXISTS sp_update_courseterm;
 
 DELIMITER //
 
@@ -187,7 +190,7 @@ END//
 -- -----------------------------------------------------
 -- Demo CUD delete procedure to show RESET works
 -- -----------------------------------------------------
-CREATE PROCEDURE delete_student(IN p_studentID INT)
+CREATE PROCEDURE sp_delete_student(IN p_studentID INT)
 BEGIN
     DELETE FROM Students
     WHERE studentID = p_studentID;
@@ -196,17 +199,17 @@ END //
 -- -----------------------------------------------------
 -- M:M procedures that are required
 -- -----------------------------------------------------
-CREATE PROCEDURE mm_insert
+CREATE PROCEDURE sp_courseTerm_insert
 BEGIN
     -- 
 END //
 
-CREATE PROCEDURE mm_delete
+CREATE PROCEDURE sp_courseTerm_delete
 BEGIN
     -- 
 END //
 
-CREATE PROCEDURE mm_update
+CREATE PROCEDURE sp_courseTerm_update
 BEGIN
     -- 
 END //

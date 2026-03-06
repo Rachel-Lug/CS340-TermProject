@@ -213,4 +213,5 @@ CREATE PROCEDURE sp_courseTerm_update
 BEGIN
     -- 
 END //
+
 DELIMITER ;

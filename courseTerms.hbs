@@ -1,13 +1,16 @@
 <h1>Course Terms</h1>
 
+<!-- Existing Table -->
 <table border="1">
   <thead>
     <tr>
       <th>ID</th>
       <th>Course</th>
       <th>Term</th>
+      <th>Instructor</th>
       <th>Start</th>
       <th>End</th>
+      <th>Update Instructor</th>
       <th>Delete</th>
     </tr>
   </thead>
@@ -18,10 +21,24 @@
       <td>{{courseTermID}}</td>
       <td>{{courseName}}</td>
       <td>{{termName}}</td>
+      <td>{{instructorName}}</td>
       <td>{{startDate}}</td>
       <td>{{endDate}}</td>
       <td>
-        <form action="/courseterms/delete" method="POST">
+        <form action="/courseTerms/update" method="POST">
+          <input type="hidden" name="courseTermID" value="{{courseTermID}}">
+          <select name="newInstructorID" required>
+            {{#each ../instructors}}
+              <option value="{{instructorID}}" {{#if (eq instructorID ../instructorID)}}selected{{/if}}>
+                {{firstName}} {{lastName}}
+              </option>
+            {{/each}}
+          </select>
+          <button type="submit">Update</button>
+        </form>
+      </td>
+      <td>
+        <form action="/courseTerms/delete" method="POST">
           <input type="hidden" name="courseTermID" value="{{courseTermID}}">
           <button type="submit">Delete</button>
         </form>
@@ -30,3 +47,30 @@
     {{/each}}
   </tbody>
 </table>
+
+<!-- Add Course Term Form --> 
+<h2>Add New Course Term</h2>
+<form action="/courseTerms/add" method="POST">
+  <label for="courseID">Course:</label>
+  <select name="courseID" id="courseID" required>
+    {{#each courses}}
+      <option value="{{courseID}}">{{courseName}}</option>
+    {{/each}}
+  </select>
+
+  <label for="academicTermID">Academic Term:</label>
+  <select name="academicTermID" id="academicTermID" required>
+    {{#each academicTerms}}
+      <option value="{{academicTermID}}">{{termName}}</option>
+    {{/each}}
+  </select>
+
+  <label for="instructorID">Instructor:</label>
+  <select name="instructorID" id="instructorID" required>
+    {{#each instructors}}
+      <option value="{{instructorID}}">{{firstName}} {{lastName}}</option>
+    {{/each}}
+  </select>
+
+  <button type="submit">Add Course Term</button>
+</form>

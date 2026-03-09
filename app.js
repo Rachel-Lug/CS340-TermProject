@@ -310,8 +310,8 @@ app.post('/courses/create', async (req, res) => {
         const { courseCode, courseTitle, courseCredit, departmentID } = req.body;
 
         await db.query(
-            `INSERT INTO Courses (courseCode, courseTitle, courseCredits, departmentID) VALUES (?, ?, ?, ?)`,
-            [courseCode, courseTitle, courseCredits, departmentID]
+            `INSERT INTO Courses (courseCode, courseTitle, courseCredit, departmentID) VALUES (?, ?, ?, ?)`,
+            [courseCode, courseTitle, courseCredit, departmentID]
         );
 
         res.redirect('/courses');
@@ -326,10 +326,10 @@ app.post('/courses/create', async (req, res) => {
 // =====================
 app.post('/courses/update', async (req, res) => {
     try {
-        const { courseID, courseTitle, courseCredits, departmentID } = req.body;
+        const { courseID, courseTitle, courseCredit, departmentID } = req.body;
         await db.query(
-            `UPDATE Courses SET courseCode = ?, courseTitle = ?, courseCredits = ?, departmentID = ? WHERE courseID = ?`,
-            [courseCode, courseTitle, courseCredits, departmentID, courseID]
+            `UPDATE Courses SET courseCode = ?, courseTitle = ?, courseCredit = ?, departmentID = ? WHERE courseID = ?`,
+            [courseCode, courseTitle, courseCredit, departmentID, courseID]
         );
         res.redirect('/courses');
     } catch (err) {

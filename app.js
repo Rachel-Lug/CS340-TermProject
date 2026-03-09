@@ -326,7 +326,7 @@ app.post('/courses/create', async (req, res) => {
 // =====================
 app.post('/courses/update', async (req, res) => {
     try {
-        const { courseID, courseTitle, courseCredit, departmentID } = req.body;
+        const { courseID, courseCode, courseTitle, courseCredit, departmentID } = req.body;
         await db.query(
             `UPDATE Courses SET courseCode = ?, courseTitle = ?, courseCredit = ?, departmentID = ? WHERE courseID = ?`,
             [courseCode, courseTitle, courseCredit, departmentID, courseID]

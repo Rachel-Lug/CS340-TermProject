@@ -327,10 +327,14 @@ app.post('/courses/create', async (req, res) => {
 app.post('/courses/update', async (req, res) => {
     try {
         const { courseID, courseCode, courseTitle, courseCredit, departmentID } = req.body;
+
         await db.query(
-            `UPDATE Courses SET courseCode = ?, courseTitle = ?, courseCredit = ?, departmentID = ? WHERE courseID = ?`,
+            `UPDATE Courses 
+             SET courseCode = ?, courseTitle = ?, courseCredit = ?, departmentID = ?
+             WHERE courseID = ?`,
             [courseCode, courseTitle, courseCredit, departmentID, courseID]
         );
+
         res.redirect('/courses');
     } catch (err) {
         console.error(err);
@@ -481,11 +485,11 @@ app.get('/courseTerms', async (req, res) => {
             FROM Instructors
             ORDER BY lastName, firstName
         `);
-        
+
         const [courses] = await db.query(`
-            SELECT courseID, courseName
+            SELECT courseID, courseTitle AS courseName
             FROM Courses
-            ORDER BY courseName;
+            ORDER BY courseTitle;
         `);
 
         const [academicTerms] = await db.query(`
@@ -498,8 +502,8 @@ app.get('/courseTerms', async (req, res) => {
             courseTerms, 
             instructors,
             courses,
-            academicTerms,
-         });
+            academicTerms
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send('Failed to load course terms');
@@ -510,11 +514,10 @@ app.post('/courseTerms/add', async (req, res) => {
     try {
         const { courseID, academicTermID, instructorID } = req.body;
 
-    await db.query(
-        // edit to call procedure
-         `INSERT INTO CourseTerms (courseID, academicTermID, instructorID)
-             VALUES (?, ?, ?)`,
-         [courseID, academicTermID, instructorID]
+        // Call the stored procedure instead of direct query
+        await db.query(
+            `CALL sp_courseTerm_insert(?, ?, ?)`,
+            [courseID, academicTermID, instructorID]
         );
 
         res.redirect('/courseTerms'); // Redirect to your CourseTerms list page
@@ -531,9 +534,9 @@ app.post('/courseTerms/delete', async (req, res) => {
     try {
         const { courseTermID } = req.body;
 
+        // Call the stored procedure instead of direct query
         await db.query(
-            // edit to call procedure
-            `DELETE FROM CourseTerms WHERE courseTermID = ?`,
+            `CALL sp_courseTerm_delete(?)`,
             [courseTermID]
         );
 
@@ -550,10 +553,10 @@ app.post('/courseTerms/update', async (req, res) => {
     try {
         const { courseTermID, newInstructorID } = req.body;
 
+        // Call the stored procedure instead of direct query
         await db.query(
-            // edit to call procedure
-            `UPDATE CourseTerms SET instructorID = ? WHERE courseTermID = ?`,
-            [newInstructorID, courseTermID]
+            `CALL sp_courseTerm_update(?, ?)`,
+            [courseTermID, newInstructorID]
         );
 
         res.redirect('/courseTerms');

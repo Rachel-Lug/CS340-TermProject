@@ -502,7 +502,7 @@ app.get('/courseTerms', async (req, res) => {
             courseTerms, 
             instructors,
             courses,
-            academicTerms
+            academicTerms,
         });
     } catch (err) {
         console.error(err);

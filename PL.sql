@@ -199,19 +199,34 @@ END //
 -- -----------------------------------------------------
 -- M:M procedures that are required
 -- -----------------------------------------------------
-CREATE PROCEDURE sp_courseTerm_insert
+CREATE PROCEDURE sp_courseTerm_insert(
+    IN p_courseID INT,
+    IN p_academicTermID INT,
+    IN p_instructorID INT
+)
 BEGIN
-    -- 
+    INSERT INTO CourseTerms (courseID, academicTermID, instructorID)
+    VALUES (p_courseID, p_academicTermID, p_instructorID);
 END //
 
-CREATE PROCEDURE sp_courseTerm_delete
+DELIMITER //
+
+CREATE PROCEDURE sp_courseTerm_delete(IN p_courseTermID INT)
 BEGIN
-    -- 
+    DELETE FROM CourseTerms
+    WHERE courseTermID = p_courseTermID;
 END //
 
-CREATE PROCEDURE sp_courseTerm_update
+DELIMITER //
+
+CREATE PROCEDURE sp_courseTerm_update(
+    IN p_courseTermID INT,
+    IN p_newInstructorID INT
+)
 BEGIN
-    -- 
+    UPDATE CourseTerms
+    SET instructorID = p_newInstructorID
+    WHERE courseTermID = p_courseTermID;
 END //
 
-DELIMITER ;
+DELIMITER //

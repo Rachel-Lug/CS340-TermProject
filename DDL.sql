@@ -1,28 +1,11 @@
 -- phpMyAdmin SQL Dump
 -- version 5.2.3-1.el9.remi
 -- https://www.phpmyadmin.net/
---
 -- Host: localhost
 -- Generation Time: Feb 04, 2026 at 11:37 AM
 -- Server version: 10.11.15-MariaDB-log
 -- PHP Version: 8.4.17
-DELIMITER //
-
-CREATE PROCEDURE sp_reset_database()
-BEGIN
-
-SET FOREIGN_KEY_CHECKS = 0;
-
-DROP TABLE IF EXISTS StudentHasCourses;
-DROP TABLE IF EXISTS CourseTerms;
-DROP TABLE IF EXISTS Students;
-DROP TABLE IF EXISTS Instructors;
-DROP TABLE IF EXISTS Courses;
-DROP TABLE IF EXISTS AcademicTerms;
-DROP TABLE IF EXISTS Departments;
-
-SET FOREIGN_KEY_CHECKS = 1;
-
+--
 -- =====================
 -- CREATE TABLES
 -- =====================
@@ -155,7 +138,3 @@ INSERT INTO StudentHasCourses VALUES
 (1, 4),
 (3, 3),
 (4, 1);
-
-END //
-
-DELIMITER ;

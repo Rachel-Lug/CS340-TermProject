@@ -9,7 +9,7 @@ The goal of the project is to develop a database that stores course information,
 ## Students Page
 Allows users to create new student records, update existing student information, and delete students from the database.
 
-##Courses Page 
+## Courses Page 
 
 Allows users to create new courses, update course information, and remove courses from the system.
 
